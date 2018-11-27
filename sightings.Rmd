@@ -39,7 +39,10 @@ ufo <- read_csv("data/scrubbed.csv",
                   longitude = col_double()
                 )) %>%
   mutate_at(vars(datetime, `date posted`), ~parse_date_time(.x, orders = c("mdyHM", "mdy"))) %>%
-  mutate(label = str_glue("<em>{datetime}</em>: <br>{comments}"))
+  mutate(label = str_glue("<strong>Timestamp:</strong> {datetime}<br>
+                          <strong>Duration:</strong> {`duration (seconds)`} seconds<br>
+                          <strong>Shape:</strong> {shape}
+                          <p>{comments}</p>"))
 
 ufo_sample <- sample_n(ufo, 2000)
 ```
