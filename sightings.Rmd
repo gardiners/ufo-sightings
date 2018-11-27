@@ -1,0 +1,56 @@
+---
+title: "UFO Sightings Map"
+author: "Sam Gardiner"
+date: "27/11/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Packages
+
+```{r}
+library(leaflet)
+library(tidyverse)
+library(lubridate)
+```
+
+# Import dataset
+
+```{r}
+ufo <- read_csv("data/scrubbed.csv",
+                col_types = cols(
+                  datetime = col_character(),
+                  city = col_factor(NULL),
+                  state = col_factor(NULL),
+                  country = col_factor(NULL),
+                  shape = col_factor(NULL),
+                  `duration (seconds)` = col_integer(),
+                  `duration (hours/min)` = col_character(),
+                  comments = col_character(),
+                  `date posted` = col_character(),
+                  latitude = col_double(),
+                  longitude = col_double()
+                )) %>%
+  mutate_at(vars(datetime, `date posted`), ~parse_date_time(.x, orders = c("mdyHM", "mdy")))
+
+ufo_sample <- sample_n(ufo, 1000)
+```
+
+
+# Map
+
+```{r}
+table(ufo$shape)
+```
+
+
+```{r}
+leaflet(ufo_sample) %>%
+  addTiles() %>%
+  addAwesomeMarkers(popup = ~paste0(datetime, ": ", comments))
+```
+
+
