@@ -1,17 +1,19 @@
 ---
 title: "UFO Sightings Map"
 author: "Sam Gardiner"
-date: "27/11/2018"
-output: html_document
+date: "27 November 2018"
+output:
+  html_document:
+    self_contained: false
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, error = FALSE)
 ```
 
 # Packages
 
-```{r}
+```{r packages}
 library(leaflet)
 library(tidyverse)
 library(lubridate)
@@ -19,7 +21,9 @@ library(lubridate)
 
 # Import dataset
 
-```{r}
+We're examining the [ufo sightings](https://www.kaggle.com/NUFORC/ufo-sightings/version/1) dataset from Kaggle.
+
+```{r data}
 ufo <- read_csv("data/scrubbed.csv",
                 col_types = cols(
                   datetime = col_character(),
@@ -42,15 +46,13 @@ ufo_sample <- sample_n(ufo, 1000)
 
 # Map
 
-```{r}
-table(ufo$shape)
-```
-
+TODO: Map icon shape and colour to sighting properies (especially UFO shape).
 
 ```{r}
-leaflet(ufo_sample) %>%
+leaflet(ufo_sample, width = 800) %>%
   addTiles() %>%
-  addAwesomeMarkers(popup = ~paste0(datetime, ": ", comments))
+  addAwesomeMarkers(popup = ~paste0(datetime, ": ", comments),
+                    clusterOptions = markerClusterOptions())
 ```
 
 
