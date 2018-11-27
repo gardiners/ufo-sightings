@@ -21,7 +21,7 @@ library(lubridate)
 
 # Import dataset
 
-We're examining the [ufo sightings](https://www.kaggle.com/NUFORC/ufo-sightings/version/1) dataset from Kaggle.
+We're using the [ufo sightings](https://www.kaggle.com/NUFORC/ufo-sightings/version/1) dataset from Kaggle. We import the dataset, set sensible datatypes for each vector, and take a random sample of 2000 sightings to map.
 
 ```{r data}
 ufo <- read_csv("data/scrubbed.csv",
@@ -38,9 +38,10 @@ ufo <- read_csv("data/scrubbed.csv",
                   latitude = col_double(),
                   longitude = col_double()
                 )) %>%
-  mutate_at(vars(datetime, `date posted`), ~parse_date_time(.x, orders = c("mdyHM", "mdy")))
+  mutate_at(vars(datetime, `date posted`), ~parse_date_time(.x, orders = c("mdyHM", "mdy"))) %>%
+  mutate(label = str_glue("<em>{datetime}</em>: <br>{comments}"))
 
-ufo_sample <- sample_n(ufo, 1000)
+ufo_sample <- sample_n(ufo, 2000)
 ```
 
 
@@ -49,10 +50,9 @@ ufo_sample <- sample_n(ufo, 1000)
 TODO: Map icon shape and colour to sighting properies (especially UFO shape).
 
 ```{r}
-leaflet(ufo_sample, width = 800) %>%
+leaflet(ufo_sample, width = 1000) %>%
   addTiles() %>%
-  addAwesomeMarkers(popup = ~paste0(datetime, ": ", comments),
-                    clusterOptions = markerClusterOptions())
+  addMarkers(popup = ~label, clusterOptions = markerClusterOptions())
 ```
 
 
